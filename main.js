@@ -1,0 +1,137 @@
+const ROWS = 3;
+const COLS = 3;
+let board = new Array(ROWS).fill(null).map(() => new Array(COLS).fill(null));
+let isGameActive = false;
+
+const template = document.getElementById("game-cell");
+const gameBoard = document.getElementById("game-board");
+const gameStatus = document.getElementById("game-status");
+const btn = document.getElementById("game-btn");
+
+const createPlayer = (playerName, playerSymbol) => {
+  const name = playerName;
+  const symbol = playerSymbol;
+
+  const getName = () => name;
+  const getSymbol = () => symbol;
+
+  return { getName, getSymbol };
+};
+
+const createGame = (player1, player2) => {
+  let currentPlayer = player1;
+
+  const togglePlayer = () => {
+    currentPlayer = currentPlayer === player1 ? player2 : player1;
+    console.log("player toggled");
+  };
+
+  const checkForTie = () => {
+    if (board.every((row) => row.every((cell) => cell))) {
+      updateGameStatus("The game ends in a draw");
+      isGameActive = false;
+    }
+    console.log("checked for tie");
+  };
+
+  const checkForWin = (row, col) => {
+    // Check for horizontal
+    console.log("Check for win", row, col);
+    for (let i = 0; i < ROWS; i++) {
+      if (
+        board[row][i] === currentPlayer &&
+        board[row][i + 1] === currentPlayer &&
+        board[row][i + 2] === currentPlayer
+      ) {
+        updateGameStatus(`${currentPlayer.getName()} wins horizontally!`);
+        isGameActive = false;
+        return;
+      }
+    }
+    //Check for vertical
+    for (let i = 0; i < COLS; i++) {
+      if (
+        board[i][col] === currentPlayer &&
+        board[i + 1][col] === currentPlayer &&
+        board[i + 2][col] === currentPlayer
+      ) {
+        updateGameStatus(`${currentPlayer.getName()} wins vertically!`);
+        isGameActive = false;
+        return;
+      }
+    }
+    // check for diagonal upwards to the right
+    // for (let i=0;i<ROWS; i++){
+    //   for(let j=0;j<COLS;j++){
+    //     if(
+    //       board[i][j] === currentPlayer &&
+    //       board[i][j] === currentPlayer &&
+    //       board[i][j] === currentPlayer &&
+    //   }
+    // }
+    // check for diagonal downwards to the right
+  };
+
+  const handleCellClick = (row, col) => {
+    const cell = board[row][col];
+    if (cell !== null || !isGameActive) return;
+
+    for (let i = ROWS - 1; i > -1; i--) {
+      if (!board[row][col]) {
+        board[row][col] = currentPlayer;
+        const box = document.getElementById(`cell-${row}-${col}`);
+        box.innerText = currentPlayer.getSymbol();
+        checkForWin(row, col);
+        checkForTie();
+        togglePlayer();
+        updateGameStatus(`${currentPlayer.getName()}'s turn`);
+        return;
+      }
+    }
+  };
+
+  const resetGame = (game) => {
+    board = new Array(ROWS).fill(null).map(() => new Array(COLS).fill(null));
+    currentPlayer = player1;
+    isGameActive = true;
+    updateGameStatus(`${currentPlayer.getName()}'s turn`);
+
+    gameBoard.innerText = "";
+    createBoard(game);
+  };
+
+  const updateGameStatus = (message) => {
+    if (!isGameActive) return;
+    gameStatus.innerText = message;
+  };
+
+  return { handleCellClick, resetGame };
+};
+
+// Create Board Function
+const createBoard = (game) => {
+  for (let i = 0; i < ROWS; i++) {
+    for (let j = 0; j < COLS; j++) {
+      const cell = template.content.cloneNode(true).querySelector("div");
+      console.log(cell);
+      cell.id = `cell-${i}-${j}`;
+      cell.addEventListener("click", () => {
+        game.handleCellClick(i, j);
+      });
+      gameBoard.appendChild(cell);
+    }
+  }
+};
+
+(function () {
+  const player1 = createPlayer("Player 1", "X");
+  const player2 = createPlayer("Player 2", "O");
+
+  const game = createGame(player1, player2);
+  createBoard(game);
+  isGameActive = true;
+
+  btn.addEventListener("click", () => {
+    game.resetGame(game);
+  });
+})();

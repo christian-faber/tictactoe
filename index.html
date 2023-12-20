@@ -12,17 +12,14 @@
       <div id="game-board" class="grid grid-rows-3 grid-cols-3 gap-3"></div>
       <p id="game-status" class="text-white text-xl">Player 1's Turn</p>
       <button
-        id="btn"
+        id="game-btn"
         class="py-2 px-3 text-white text-xl bg-blue-300 rounded-md"
       >
         Reset Game
       </button>
     </div>
-    <template>
-      <div
-        id="game-cell"
-        class="bg-slate-200 p-5 h-24 w-24 lg:h-48 lg:w-48"
-      ></div>
+    <template id="game-cell">
+      <div class="bg-slate-200 p-5 h-24 w-24 lg:h-48 lg:w-48"></div>
     </template>
     <script src="./main.js"></script>
   </body>
