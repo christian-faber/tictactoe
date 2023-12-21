@@ -8,16 +8,6 @@ const gameBoard = document.getElementById("game-board");
 const gameStatus = document.getElementById("game-status");
 const btn = document.getElementById("game-btn");
 
-const createPlayer = (playerName, playerSymbol) => {
-  const name = playerName;
-  const symbol = playerSymbol;
-
-  const getName = () => name;
-  const getSymbol = () => symbol;
-
-  return { getName, getSymbol };
-};
-
 const createGame = (player1, player2) => {
   let currentPlayer = player1;
 
@@ -49,7 +39,7 @@ const createGame = (player1, player2) => {
       }
     }
     //Check for vertical
-    for (let i = 0; i < COLS; i++) {
+    for (let i = 0; i < ROWS; i++) {
       if (
         board[i][col] === currentPlayer &&
         board[i + 1][col] === currentPlayer &&
@@ -61,15 +51,25 @@ const createGame = (player1, player2) => {
       }
     }
     // check for diagonal upwards to the right
-    // for (let i=0;i<ROWS; i++){
-    //   for(let j=0;j<COLS;j++){
-    //     if(
-    //       board[i][j] === currentPlayer &&
-    //       board[i][j] === currentPlayer &&
-    //       board[i][j] === currentPlayer &&
-    //   }
-    // }
+    if (
+      board[2][0] === currentPlayer &&
+      board[1][1] === currentPlayer &&
+      board[0][2] === currentPlayer
+    ) {
+      updateGameStatus(`${currentPlayer.getName()} wins diagonally!`);
+      isGameActive = false;
+      return;
+    }
     // check for diagonal downwards to the right
+    if (
+      board[0][0] === currentPlayer &&
+      board[1][1] === currentPlayer &&
+      board[2][2] === currentPlayer
+    ) {
+      updateGameStatus(`${currentPlayer.getName()} wins diagonally!`);
+      isGameActive = false;
+      return;
+    }
   };
 
   const handleCellClick = (row, col) => {
@@ -77,16 +77,14 @@ const createGame = (player1, player2) => {
     if (cell !== null || !isGameActive) return;
 
     for (let i = ROWS - 1; i > -1; i--) {
-      if (!board[row][col]) {
-        board[row][col] = currentPlayer;
-        const box = document.getElementById(`cell-${row}-${col}`);
-        box.innerText = currentPlayer.getSymbol();
-        checkForWin(row, col);
-        checkForTie();
-        togglePlayer();
-        updateGameStatus(`${currentPlayer.getName()}'s turn`);
-        return;
-      }
+      board[row][col] = currentPlayer;
+      const box = document.getElementById(`cell-${row}-${col}`);
+      box.innerText = currentPlayer.getSymbol();
+      checkForWin(row, col);
+      checkForTie();
+      togglePlayer();
+      updateGameStatus(`${currentPlayer.getName()}'s turn`);
+      return;
     }
   };
 
@@ -123,6 +121,18 @@ const createBoard = (game) => {
   }
 };
 
+//Create Player Factory Function
+const createPlayer = (playerName, playerSymbol) => {
+  const name = playerName;
+  const symbol = playerSymbol;
+
+  const getName = () => name;
+  const getSymbol = () => symbol;
+
+  return { getName, getSymbol };
+};
+
+//Initial function
 (function () {
   const player1 = createPlayer("Player 1", "X");
   const player2 = createPlayer("Player 2", "O");
