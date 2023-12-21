@@ -27,28 +27,25 @@ const createGame = (player1, player2) => {
   const checkForWin = (row, col) => {
     // Check for horizontal
     console.log("Check for win", row, col);
-    for (let i = 0; i < ROWS; i++) {
-      if (
-        board[row][i] === currentPlayer &&
-        board[row][i + 1] === currentPlayer &&
-        board[row][i + 2] === currentPlayer
-      ) {
-        updateGameStatus(`${currentPlayer.getName()} wins horizontally!`);
-        isGameActive = false;
-        return;
-      }
+    if (
+      board[row][0] === currentPlayer &&
+      board[row][1] === currentPlayer &&
+      board[row][2] === currentPlayer
+    ) {
+      updateGameStatus(`${currentPlayer.getName()} wins horizontally!`);
+      isGameActive = false;
+      return;
     }
     //Check for vertical
-    for (let i = 0; i < ROWS; i++) {
-      if (
-        board[i][col] === currentPlayer &&
-        board[i + 1][col] === currentPlayer &&
-        board[i + 2][col] === currentPlayer
-      ) {
-        updateGameStatus(`${currentPlayer.getName()} wins vertically!`);
-        isGameActive = false;
-        return;
-      }
+
+    if (
+      board[0][col] === currentPlayer &&
+      board[1][col] === currentPlayer &&
+      board[2][col] === currentPlayer
+    ) {
+      updateGameStatus(`${currentPlayer.getName()} wins vertically!`);
+      isGameActive = false;
+      return;
     }
     // check for diagonal upwards to the right
     if (
@@ -76,16 +73,14 @@ const createGame = (player1, player2) => {
     const cell = board[row][col];
     if (cell !== null || !isGameActive) return;
 
-    for (let i = ROWS - 1; i > -1; i--) {
-      board[row][col] = currentPlayer;
-      const box = document.getElementById(`cell-${row}-${col}`);
-      box.innerText = currentPlayer.getSymbol();
-      checkForWin(row, col);
-      checkForTie();
-      togglePlayer();
-      updateGameStatus(`${currentPlayer.getName()}'s turn`);
-      return;
-    }
+    board[row][col] = currentPlayer;
+    const box = document.getElementById(`cell-${row}-${col}`);
+    box.innerText = currentPlayer.getSymbol();
+    checkForWin(row, col);
+    checkForTie();
+    togglePlayer();
+    updateGameStatus(`${currentPlayer.getName()}'s turn`);
+    return;
   };
 
   const resetGame = (game) => {
